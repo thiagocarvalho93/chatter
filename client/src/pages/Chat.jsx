@@ -51,16 +51,27 @@ export default function Chat(props) {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Left sidebar for chats */}
-      <div className="bg-gray-900 w-64 py-4 px-8 text-white">
-        <h2 className="text-xl font-bold mb-4">Chats</h2>
-        {/* Add chat list here */}
+
+      <div className="bg-gray-900 w-64 text-white">
+        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold">Chatter</div>
+        <ul class="max-w-md">
+          <li class="p-4 bg-gray-800 transition duration-500 ease-in-out hover:bg-gray-600 cursor-pointer">
+            <p>Home</p>
+          </li>
+          <li class="p-4 transition duration-500 ease-in-out hover:bg-gray-600 cursor-pointer">
+            John
+          </li>
+          <li class="p-4 transition duration-500 ease-in-out hover:bg-gray-600 cursor-pointer">
+            Alice
+          </li>
+        </ul>
       </div>
 
       {/* Main content */}
       <div className="flex flex-col flex-1 border-r border-l border-gray-700">
         {/* Chat header */}
         <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
-          Chat
+          Home
         </div>
 
         {/* Chat messages */}
@@ -69,7 +80,8 @@ export default function Chat(props) {
             {messages().map((message, index) => (
               <li key={index} className="mb-4">
                 <span className="text-gray-400">[{message.dateTime}]</span>{" "}
-                <span className="font-semibold">{message.user}:</span> {message.text}
+                <span className="font-semibold">{message.user}:</span>
+                <span className="break-all"> {message.text}</span>
               </li>
             ))}
           </ul>
@@ -97,8 +109,8 @@ export default function Chat(props) {
       </div>
 
       {/* Right sidebar for "Who is Online?" */}
-      <div className="bg-gray-900 w-64 py-4 px-8 text-white">
-        <h2 className="text-xl font-bold mb-4">Who is Online?</h2>
+      <div className="bg-gray-900 w-64 text-white">
+        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold">Who is online?</div>
         {/* Add online users list here */}
       </div>
     </div>
