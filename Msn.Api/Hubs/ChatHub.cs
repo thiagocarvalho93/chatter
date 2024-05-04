@@ -1,23 +1,39 @@
 using Microsoft.AspNetCore.SignalR;
 using Msn.Api.Repositories;
+using Msn.Api.Services;
 
 namespace Msn.Api.Hubs
 {
-    public class ChatHub(MessageRepository messageRepository) : Hub
+    public class ChatHub(MessageRepository messageRepository, ConnectionManager connectionManager) : Hub
     {
         private readonly MessageRepository _messageRepository = messageRepository;
+        private readonly ConnectionManager _connectionManager = connectionManager;
 
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("Connect", $"New user has connected.", DateTime.Now);
+            var httpContext = Context.GetHttpContext();
+            var cookies = httpContext?.Request.Cookies;
 
+            if (cookies.TryGetValue("username", out var username))
+            {
+                var connectionId = Context.ConnectionId;
+
+                _connectionManager.AddConnection(connectionId, username);
+            }
+
+            await Clients.All.SendAsync("Connect", $"user {username} has connected.", DateTime.Now, _connectionManager.GetAllUserNames());
             await base.OnConnectedAsync();
         }
 
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            Clients.All.SendAsync("Disconnect", $"User has disconnected.");
-            return base.OnDisconnectedAsync(exception);
+            var connectionId = Context.ConnectionId;
+            var name = _connectionManager.GetUserName(connectionId);
+
+            _connectionManager.RemoveConnection(connectionId);
+
+            await Clients.All.SendAsync("Disconnect", $"User {name} has disconnected.", DateTime.Now, _connectionManager.GetAllUserNames());
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task Broadcast(string name, string message)

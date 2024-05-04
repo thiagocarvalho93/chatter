@@ -2,6 +2,7 @@ using FluentValidation;
 using Msn.Api.Data;
 using Msn.Api.DTOs;
 using Msn.Api.Repositories;
+using Msn.Api.Services;
 using Msn.Api.Validators;
 
 namespace Msn.Api.Extensions;
@@ -32,6 +33,7 @@ public static class Configuration
         });
         builder.Services.AddScoped<IValidator<UserRegisterDTO>, UserRegisterValidator>();
         builder.Services.AddScoped<MessageRepository>();
+        builder.Services.AddSingleton<ConnectionManager>();
         builder.Services.AddOutputCache();
     }
 

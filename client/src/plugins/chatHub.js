@@ -2,7 +2,7 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 
 class ChatHub {
   constructor() {
-    const URL = "http://localhost:5014/chat";
+    const URL = `http://localhost:5014/chat`;
     this.client = new HubConnectionBuilder().withUrl(URL, { withCredentials: false }).build();
   }
 

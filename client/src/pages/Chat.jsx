@@ -4,30 +4,46 @@ import chatHub from "../plugins/chatHub";
 import { fetchMessages } from "../api/message-api";
 import { MessageModel } from "../models/message-model";
 import { formatDate } from "../utils/date-util";
+import { useNavigate } from "@solidjs/router";
 
 export default function Chat(props) {
   const location = useLocation();
   const username = location.state.name;
   const [messages, setMessages] = createSignal([]);
   const [message, setMessage] = createSignal("");
+  const [online, setOnline] = createSignal([]);
+  const navigate = useNavigate();
 
   onMount(async () => {
     const oldMessages = await fetchMessages();
     const initialMessagesArray = oldMessages.map((x) => new MessageModel(x));
 
-    setMessages(initialMessagesArray);
-  });
+    if (!username) {
+      navigate("/");
 
-  chatHub.start();
+      return;
+    }
+
+    document.cookie = `username=${username}`;
+
+    setMessages(initialMessagesArray);
+    chatHub.start();
+  });
 
   chatHub.client.on("ReceiveMessage", (user, message, datetime) => {
     const dateTime = formatDate(new Date(datetime));
     setMessages((old) => [...old, { dateTime, user: user, text: message }]);
   });
 
-  chatHub.client.on("Connect", (message, datetime) => {
+  chatHub.client.on("Connect", (message, datetime, online) => {
     const dateTime = formatDate(new Date(datetime));
+    setOnline(online);
+    setMessages((old) => [...old, { dateTime, user: "Server", text: message }]);
+  });
 
+  chatHub.client.on("Disconnect", (message, datetime, online) => {
+    const dateTime = formatDate(new Date(datetime));
+    setOnline(online);
     setMessages((old) => [...old, { dateTime, user: "Server", text: message }]);
   });
 
@@ -50,32 +66,13 @@ export default function Chat(props) {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Left sidebar for chats */}
-
-      <div className="bg-gray-900 w-64 text-white">
-        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold">Chatter</div>
-        <ul class="max-w-md">
-          <li class="p-4 bg-gray-800 transition duration-500 ease-in-out hover:bg-gray-600 cursor-pointer">
-            <p>Home</p>
-          </li>
-          <li class="p-4 transition duration-500 ease-in-out hover:bg-gray-600 cursor-pointer">
-            John
-          </li>
-          <li class="p-4 transition duration-500 ease-in-out hover:bg-gray-600 cursor-pointer">
-            Alice
-          </li>
-        </ul>
-      </div>
-
-      {/* Main content */}
       <div className="flex flex-col flex-1 border-r border-l border-gray-700">
-        {/* Chat header */}
         <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
-          Home
+          Chat
         </div>
 
         {/* Chat messages */}
-        <div className="flex-1 bg-gray-800 text-white p-4 overflow-y-auto">
+        <div className="flex-1 bg-gray-800 shadow-inner text-white p-4 overflow-y-auto">
           <ul>
             {messages().map((message, index) => (
               <li key={index} className="mb-4">
@@ -95,7 +92,7 @@ export default function Chat(props) {
             value={message()}
             onInput={handleMessageChange}
             onKeyDown={handleKeyPress}
-            className="flex-1 bg-gray-800 text-white px-4 py-2 rounded-l focus:outline-none"
+            className="flex-1 bg-gray-800 shadow-inner text-white px-4 py-2 rounded-l focus:outline-none"
             placeholder="Type your message here..."
           />
           <button
@@ -110,8 +107,18 @@ export default function Chat(props) {
 
       {/* Right sidebar for "Who is Online?" */}
       <div className="bg-gray-900 w-64 text-white">
-        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold">Who is online?</div>
-        {/* Add online users list here */}
+        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
+          Who is online?
+        </div>
+        <ul>
+          {/* Add online users list here */}
+          {online().map((user, index) => (
+            <li key={index} className="p-3 flex flex-row align-text-top border-b border-gray-700">
+              <div class="bg-green-700 mr-2 h-3 w-3 rounded-full self-center"></div>
+              <span>{user}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
