@@ -21,56 +21,76 @@ namespace Msn.Api.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("DateTime")
-                        .HasColumnType("TEXT");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("date_time")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("text");
 
                     b.Property<string>("User")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("user");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("Msn.Api.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("id");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("email");
 
                     b.Property<string>("HashedPassword")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("hashed_password");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("image_url");
 
                     b.Property<DateTime>("LastOnline")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("last_online");
 
                     b.Property<string>("Nickname")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("nickname");
 
                     b.Property<string>("Subnick")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT")
+                        .HasColumnName("subnick");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

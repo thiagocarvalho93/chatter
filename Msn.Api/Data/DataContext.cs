@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Msn.Api.Data.Mappings;
 using Msn.Api.Models;
 
 namespace Msn.Api.Data
@@ -16,6 +13,13 @@ namespace Msn.Api.Data
         public DataContext()
         {
             DbPath = "userdata.db";
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfiguration(new UserMapping());
+            modelBuilder.ApplyConfiguration(new MessageMapping());
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
