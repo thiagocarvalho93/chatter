@@ -10,6 +10,8 @@ public static class Configuration
 {
     public static void RegisterServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication("Bearer").AddJwtBearer();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddDbContext<DataContext>();
         builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +41,7 @@ public static class Configuration
 
     public static void RegisterMiddlewares(this WebApplication app)
     {
+        app.UseAuthorization();
         app.UseCors();
 
         if (app.Environment.IsDevelopment())
