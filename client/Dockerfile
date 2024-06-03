@@ -1,27 +1,13 @@
-# ---------------------------------------
-# Production stage
-# ---------------------------------------
-  FROM nginx:1.21.6 AS production
+FROM node:16-alpine as build
 
-  ARG NODE_ENV=production
-  ENV NODE_ENV=${NODE_ENV}
-  
-  RUN apt-get update && apt-get install -y \
-      software-properties-common \
-      npm
-  RUN npm install npm@latest -g && \
-      npm install n -g && \
-      n 16
-  
-  WORKDIR /node
-  COPY package*.json tsconfig.json ./
-  RUN npm install --include=dev
-  
-  COPY . .
-  RUN npm run build
-  
-  RUN rm -rf /usr/share/nginx/html/*
-  RUN mv dist/* /usr/share/nginx/html
-  COPY nginx.conf /etc/nginx/conf.d/default.conf
-  
-  ENTRYPOINT ["nginx", "-g", "daemon off;"]
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
