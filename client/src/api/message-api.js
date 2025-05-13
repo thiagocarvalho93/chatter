@@ -1,6 +1,8 @@
+const BASE_URL = import.meta?.env?.SOLID_APP_API_URL ?? "http://localhost:5014"
+
 export async function fetchMessages() {
   try {
-    const response = await fetch("http://localhost:5014/api/v1/messages");
+    const response = await fetch(`${BASE_URL}/api/v1/messages`);
 
     if (!response.ok) {
       throw new Error("Network response was not ok");
