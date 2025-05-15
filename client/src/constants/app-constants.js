@@ -1,1 +1,1 @@
-export const BASE_URL = import.meta?.env?.SOLID_APP_API_URL ?? "http://localhost:5014";
+export const BASE_URL = import.meta?.env?.VITE_API_URL ?? "http://localhost:5014";
