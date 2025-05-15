@@ -1,13 +1,19 @@
 import { HubConnectionBuilder } from "@microsoft/signalr";
+import { BASE_URL } from "../constants/app-constants";
 
 class ChatHub {
   constructor() {
-    const URL = `http://localhost:5014/chat`;
-    this.client = new HubConnectionBuilder().withUrl(URL, { withCredentials: false }).build();
+    this.client = new HubConnectionBuilder().withUrl(`${BASE_URL}/chat`, {
+      accessTokenFactory: () => localStorage.getItem("access_token")
+    }).build();
   }
 
   start() {
-    this.client.start({ withCredentials: false });
+    this.client.start();
+  }
+
+  stop() {
+    this.client.stop();
   }
 
   async sendMessage(user, message) {

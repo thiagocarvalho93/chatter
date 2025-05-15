@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Msn.Api.Repositories;
 using Msn.Api.Services;
@@ -9,19 +11,21 @@ namespace Msn.Api.Hubs
         private readonly MessageRepository _messageRepository = messageRepository;
         private readonly ConnectionManager _connectionManager = connectionManager;
 
+        [Authorize]
         public override async Task OnConnectedAsync()
         {
-            var httpContext = Context.GetHttpContext();
-            var cookies = httpContext?.Request.Cookies;
+            var user = Context.User;
 
-            if (cookies.TryGetValue("username", out var username))
+            var username = user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            if (!string.IsNullOrEmpty(username))
             {
                 var connectionId = Context.ConnectionId;
-
                 _connectionManager.AddConnection(connectionId, username);
+
+                await Clients.All.SendAsync("Connect", $"User {username} has connected.", DateTime.Now, _connectionManager.GetAllUserNames());
             }
 
-            await Clients.All.SendAsync("Connect", $"user {username} has connected.", DateTime.Now, _connectionManager.GetAllUserNames());
             await base.OnConnectedAsync();
         }
 

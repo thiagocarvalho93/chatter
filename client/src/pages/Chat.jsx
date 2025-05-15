@@ -24,8 +24,6 @@ export default function Chat(props) {
       return;
     }
 
-    document.cookie = `username=${username}`;
-
     setMessages(initialMessagesArray);
     chatHub.start();
   });

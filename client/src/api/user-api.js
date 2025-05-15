@@ -1,8 +1,12 @@
 import { BASE_URL } from "../constants/app-constants";
 
-export async function fetchMessages() {
+export async function loginTemp(name) {
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/messages`);
+    const response = await fetch(`${BASE_URL}/api/v1/users/login-temp?name=${name}`,
+      {
+        method: "POST",
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Network response was not ok");

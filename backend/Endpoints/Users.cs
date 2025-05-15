@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Msn.Api.Data;
 using Msn.Api.DTOs;
 using Msn.Api.Filters;
 using Msn.Api.Models;
+using Msn.Api.Services;
 
 namespace Msn.Api.Endpoints;
 public static class Users
@@ -48,6 +50,18 @@ public static class Users
             {
                 return Results.NotFound("User not found or password incorrect");
             }
+        });
+
+        users.MapPost("login-temp", ([FromQuery] string name, TokenService tokenService, DataContext db) =>
+        {
+            if (name == null)
+            {
+                return Results.BadRequest("Invalid name");
+            }
+
+            var token = tokenService.GenerateToken(name);
+
+            return Results.Ok(token);
         });
 
         users.MapPatch("/{id}", async (int id, UserUpdateDTO dto, DataContext db) =>

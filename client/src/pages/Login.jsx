@@ -1,9 +1,13 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
+import { loginTemp } from "../api/user-api";
+import chatHub from "../plugins/chatHub";
 
 export default function Login(props) {
   const [name, setName] = createSignal("");
   const navigate = useNavigate();
+
+  chatHub.stop()
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -15,10 +19,17 @@ export default function Login(props) {
     }
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const nameIsValid = validateName(name());
     if (nameIsValid) {
-      navigate("/chat", { state: { name: name() } });
+      try {
+        var token = await loginTemp(name());
+        localStorage.setItem("access_token", token)
+
+        navigate("/chat", { state: { name: name() } });
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       alert("Name is invalid!");
     }
