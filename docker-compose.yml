@@ -16,5 +16,7 @@ services:
       dockerfile: client/Dockerfile
     ports:
       - "3000:80"
+    environment:
+      - VITE_API_URL=https://chatter-api.space
     depends_on:
       - backend
