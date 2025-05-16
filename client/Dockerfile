@@ -1,15 +1,10 @@
 FROM node:20 AS build
 WORKDIR /app
-
-COPY package*.json ./
+COPY client/package*.json .
 RUN npm install
-
-COPY . ./
+COPY client/ .
 RUN npm run build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 3000
-CMD ["nginx", "-g", "daemon off;"]
+COPY client/nginx.conf /etc/nginx/conf.d/default.conf

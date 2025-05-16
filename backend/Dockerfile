@@ -1,19 +1,13 @@
-# Base image for the runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 5000
-
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+COPY ["backend/*.csproj", "./"]
+RUN dotnet restore
+COPY backend/ .
+RUN dotnet publish -c Release -o /app
 
-COPY backend/Msn.Api.csproj ./ 
-RUN dotnet restore "Msn.Api.csproj"
-
-COPY backend/. .
-
-RUN dotnet publish -c Release -o /app/publish
-
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /app .
+ENV ASPNETCORE_URLS=http://+:80
+EXPOSE 80
 ENTRYPOINT ["dotnet", "Msn.Api.dll"]
