@@ -9,6 +9,7 @@ using Msn.Api.Services;
 using Msn.Api.Validators;
 
 namespace Msn.Api.Extensions;
+
 public static class Configuration
 {
     public static void RegisterServices(this WebApplicationBuilder builder)
@@ -70,7 +71,10 @@ public static class Configuration
                 builder =>
                 {
                     builder
-                        .WithOrigins(["http://localhost:3000", "https://chatter-mu-wine.vercel.app"])
+                        .WithOrigins([
+                            "http://localhost:3000",
+                            "https://chatter-mu-wine.vercel.app",
+                            "https://chatter-api.space"])
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
