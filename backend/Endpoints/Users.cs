@@ -7,11 +7,24 @@ using Msn.Api.Models;
 using Msn.Api.Services;
 
 namespace Msn.Api.Endpoints;
+
 public static class Users
 {
     public static void RegisterUserEndpoints(this IEndpointRouteBuilder routes)
     {
         var users = routes.MapGroup("api/v1/users");
+
+        users.MapGet("login-temp", ([FromQuery] string name, TokenService tokenService, DataContext db) =>
+        {
+            if (name == null)
+            {
+                return Results.BadRequest("Invalid name");
+            }
+
+            var token = tokenService.GenerateToken(name);
+
+            return Results.Ok(token);
+        });
 
         users.MapGet("", async (DataContext db) => await db.Users.ToListAsync())
             .CacheOutput();
@@ -52,17 +65,6 @@ public static class Users
             }
         });
 
-        users.MapPost("login-temp", ([FromQuery] string name, TokenService tokenService, DataContext db) =>
-        {
-            if (name == null)
-            {
-                return Results.BadRequest("Invalid name");
-            }
-
-            var token = tokenService.GenerateToken(name);
-
-            return Results.Ok(token);
-        });
 
         users.MapPatch("/{id}", async (int id, UserUpdateDTO dto, DataContext db) =>
         {

@@ -2,11 +2,7 @@ import { BASE_URL } from "../constants/app-constants";
 
 export async function loginTemp(name) {
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/users/login-temp?name=${name}`,
-      {
-        method: "POST",
-      }
-    );
+    const response = await fetch(`${BASE_URL}/api/v1/users/login-temp?name=${name}`);
 
     if (!response.ok) {
       throw new Error("Network response was not ok");

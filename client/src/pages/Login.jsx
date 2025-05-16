@@ -20,18 +20,26 @@ export default function Login(props) {
   };
 
   const handleLogin = async () => {
-    const nameIsValid = validateName(name());
-    if (nameIsValid) {
-      try {
-        var token = await loginTemp(name());
-        localStorage.setItem("access_token", token)
+    const username = name();
 
-        navigate("/chat", { state: { name: name() } });
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
+    if (!validateName(username)) {
       alert("Name is invalid!");
+      return;
+    }
+
+    try {
+      const token = await loginTemp(username);
+
+      if (!token) {
+        throw new Error("Token is null or undefined.");
+      }
+
+      localStorage.setItem("access_token", token);
+
+      navigate("/chat", { state: { name: username } });
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Failed to login. Please try again.");
     }
   };
 
