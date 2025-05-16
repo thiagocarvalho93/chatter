@@ -14,12 +14,12 @@ public static class Users
     {
         var users = routes.MapGroup("api/v1/users");
 
-        users.MapGet("login-temp", ([FromQuery] string name, TokenService tokenService, DataContext db) =>
+        users.MapPost("login-temp", ([FromBody] LoginTempRequestDTO request, TokenService tokenService) =>
         {
-            if (name == null)
-            {
+            var name = request.Name;
+
+            if (string.IsNullOrEmpty(name))
                 return Results.BadRequest("Invalid name");
-            }
 
             var token = tokenService.GenerateToken(name);
 

@@ -2,7 +2,14 @@ import { BASE_URL } from "../constants/app-constants";
 
 export async function loginTemp(name) {
   try {
-    const response = await fetch(`${BASE_URL}/api/v1/users/login-temp?name=${name}`);
+    const body = JSON.stringify({ name });
+    const response = await fetch(`${BASE_URL}/api/v1/users/login-temp`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Network response was not ok");
