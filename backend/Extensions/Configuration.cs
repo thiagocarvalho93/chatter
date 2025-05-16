@@ -70,7 +70,7 @@ public static class Configuration
                 builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:3000")
+                        .WithOrigins(["http://localhost:3000", "https://chatter-mu-wine.vercel.app"])
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
