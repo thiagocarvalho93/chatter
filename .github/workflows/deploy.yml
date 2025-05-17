@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd ~/chatter-deploy
+            cd /home/ubuntu/dev/chatter
             git pull origin main
             docker compose down
             docker compose up -d --build
