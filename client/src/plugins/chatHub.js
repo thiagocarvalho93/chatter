@@ -16,6 +16,10 @@ class ChatHub {
     this.client.stop();
   }
 
+  hasConnectionId() {
+    return !!this.client.connectionId;
+  }
+
   async sendMessage(user, message) {
     try {
       await this.client.invoke("Broadcast", user, message);

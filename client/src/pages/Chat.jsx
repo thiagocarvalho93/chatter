@@ -18,7 +18,10 @@ export default function Chat(props) {
     const oldMessages = await fetchMessages();
     const initialMessagesArray = oldMessages.map((x) => new MessageModel(x));
 
-    if (!username || !localStorage.getItem("access_token")) {
+    if (!username ||
+      !localStorage.getItem("access_token") ||
+      !chatHub.hasConnectionId) {
+
       navigate("/");
 
       return;
