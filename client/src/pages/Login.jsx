@@ -47,7 +47,7 @@ export default function Login(props) {
     text && typeof text === "string" && text.length > 0 && text.length < 50;
 
   return (
-    <div className="bg-gray-900 min-h-screen flex items-center justify-center">
+    <div className="bg-gray-900 min-h-screen px-8 flex items-center justify-center">
       <div className="bg-gray-800 rounded-lg p-8 shadow-lg w-96 border-2 border-gray-700">
         <h1 className="text-white text-2xl font-bold mb-4">Welcome to the Chat!</h1>
         <label htmlFor="name-input" className="block text-gray-300 mb-2">

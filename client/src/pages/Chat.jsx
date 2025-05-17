@@ -18,7 +18,7 @@ export default function Chat(props) {
     const oldMessages = await fetchMessages();
     const initialMessagesArray = oldMessages.map((x) => new MessageModel(x));
 
-    if (!username) {
+    if (!username || !localStorage.getItem("access_token")) {
       navigate("/");
 
       return;
@@ -66,7 +66,7 @@ export default function Chat(props) {
     <div className="flex h-screen bg-gray-100">
       <div className="flex flex-col flex-1 border-r border-l border-gray-700">
         <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
-          Chat
+          <span>Chat</span>
         </div>
 
         {/* Chat messages */}
@@ -104,8 +104,8 @@ export default function Chat(props) {
       </div>
 
       {/* Right sidebar for "Who is Online?" */}
-      <div className="bg-gray-900 w-64 text-white">
-        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
+      <div className="bg-gray-900 hidden md:block w-0 md:w-64 text-white">
+        <div className="bg-gray-900 hidden md:block text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
           Who is online?
         </div>
         <ul>
