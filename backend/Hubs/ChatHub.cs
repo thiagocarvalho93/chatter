@@ -23,7 +23,7 @@ namespace Msn.Api.Hubs
                 var connectionId = Context.ConnectionId;
                 _connectionManager.AddConnection(connectionId, username);
 
-                await Clients.All.SendAsync("Connect", $"User {username} has connected.", DateTime.Now, _connectionManager.GetAllUserNames());
+                await Clients.All.SendAsync("Connect", $"{username} has connected.", DateTime.Now, _connectionManager.GetAllUserNames());
             }
 
             await base.OnConnectedAsync();
@@ -36,7 +36,7 @@ namespace Msn.Api.Hubs
 
             _connectionManager.RemoveConnection(connectionId);
 
-            await Clients.All.SendAsync("Disconnect", $"User {name} has disconnected.", DateTime.Now, _connectionManager.GetAllUserNames());
+            await Clients.All.SendAsync("Disconnect", $"{name} has disconnected.", DateTime.Now, _connectionManager.GetAllUserNames());
             await base.OnDisconnectedAsync(exception);
         }
 

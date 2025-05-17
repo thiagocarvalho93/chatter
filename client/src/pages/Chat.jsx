@@ -6,7 +6,7 @@ import { MessageModel } from "../models/message-model";
 import { formatDate } from "../utils/date-util";
 import { useNavigate } from "@solidjs/router";
 
-export default function Chat(props) {
+export default function Chat() {
   const location = useLocation();
   const username = location.state.name;
   const [messages, setMessages] = createSignal([]);
@@ -31,21 +31,24 @@ export default function Chat(props) {
     chatHub.start();
   });
 
-  chatHub.client.on("ReceiveMessage", (user, message, datetime) => {
-    const dateTime = formatDate(new Date(datetime));
-    setMessages((old) => [...old, { dateTime, user: user, text: message }]);
+  chatHub.client.on("ReceiveMessage", (user, text, dateTime) => {
+    const messageModel = new MessageModel({ dateTime, user, text });
+
+    setMessages((old) => [...old, messageModel]);
   });
 
-  chatHub.client.on("Connect", (message, datetime, online) => {
-    const dateTime = formatDate(new Date(datetime));
+  chatHub.client.on("Connect", (text, dateTime, online) => {
+    const messageModel = new MessageModel({ dateTime, user: "Server", text });
+
     setOnline(online);
-    setMessages((old) => [...old, { dateTime, user: "Server", text: message }]);
+    setMessages((old) => [...old, messageModel]);
   });
 
-  chatHub.client.on("Disconnect", (message, datetime, online) => {
-    const dateTime = formatDate(new Date(datetime));
+  chatHub.client.on("Disconnect", (text, dateTime, online) => {
+    const messageModel = new MessageModel({ dateTime, user: "Server", text });
+
     setOnline(online);
-    setMessages((old) => [...old, { dateTime, user: "Server", text: message }]);
+    setMessages((old) => [...old, messageModel]);
   });
 
   const handleMessageChange = (event) => {
@@ -74,12 +77,12 @@ export default function Chat(props) {
 
         {/* Chat messages */}
         <div className="flex-1 bg-gray-800 shadow-inner text-white p-4 overflow-y-auto">
-          <ul>
+          <ul className="">
             {messages().map((message, index) => (
               <li key={index} className="mb-4">
-                <span className="text-gray-400">[{message.dateTime}]</span>{" "}
-                <span className="font-semibold">{message.user}:</span>
-                <span className="break-all"> {message.text}</span>
+                <span className={`font-semibold ${message.color}`}>{message.user}:</span>
+                <span className={`break-all mr-3 ${message.color}`}> {message.text}</span>
+                <span className="text-gray-600" >{message.dateTime}</span>
               </li>
             ))}
           </ul>

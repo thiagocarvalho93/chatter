@@ -18,7 +18,7 @@ public static class Users
         {
             var name = request.Name;
 
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name) || name == "Server")
                 return Results.BadRequest("Invalid name");
 
             var token = tokenService.GenerateToken(name);

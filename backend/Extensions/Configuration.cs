@@ -45,7 +45,6 @@ public static class Configuration
                 {
                     var accessToken = context.Request.Query["access_token"];
 
-                    System.Console.WriteLine(accessToken);
                     var path = context.HttpContext.Request.Path;
                     if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chat"))
                     {

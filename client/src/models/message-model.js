@@ -7,4 +7,8 @@ export class MessageModel {
     this.text = obj.text;
     this.user = obj.user;
   }
+
+  get color() {
+    return this.user == 'Server' ? 'text-blue-500' : ''
+  }
 }
