@@ -3,8 +3,9 @@ import { useNavigate } from "@solidjs/router";
 import { loginTemp } from "../api/user-api";
 import chatHub from "../plugins/chatHub";
 
-export default function Login(props) {
+export default function Login() {
   const [name, setName] = createSignal("");
+  const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
 
   chatHub.stop()
@@ -21,9 +22,12 @@ export default function Login(props) {
 
   const handleLogin = async () => {
     const username = name();
+    setLoading(true)
 
     if (!validateName(username)) {
       alert("Name is invalid!");
+      setLoading(false)
+
       return;
     }
 
@@ -31,6 +35,7 @@ export default function Login(props) {
       const token = await loginTemp(username);
 
       if (!token) {
+        setLoading(false)
         throw new Error("Token is null or undefined.");
       }
 
@@ -40,6 +45,8 @@ export default function Login(props) {
     } catch (error) {
       console.error("Login failed:", error);
       alert("Failed to login. Please try again.");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -65,8 +72,9 @@ export default function Login(props) {
         <button
           onClick={handleLogin}
           className="block w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+          disabled={loading()}
         >
-          Enter Chat
+          {loading() ? 'Logging in...' : 'Enter chat'}
         </button>
       </div>
     </div>

@@ -13,6 +13,11 @@ export default function Chat() {
   const [message, setMessage] = createSignal("");
   const [online, setOnline] = createSignal([]);
   const navigate = useNavigate();
+  let chatContainerRef;
+
+  function scrollMessages() {
+    chatContainerRef.scrollTop = chatContainerRef.scrollHeight;
+  }
 
   onMount(async () => {
     const oldMessages = await fetchMessages();
@@ -28,6 +33,8 @@ export default function Chat() {
     }
 
     setMessages(initialMessagesArray);
+    scrollMessages();
+
     chatHub.start();
   });
 
@@ -35,6 +42,8 @@ export default function Chat() {
     const messageModel = new MessageModel({ dateTime, user, text });
 
     setMessages((old) => [...old, messageModel]);
+
+    scrollMessages();
   });
 
   chatHub.client.on("Connect", (text, dateTime, online) => {
@@ -42,6 +51,8 @@ export default function Chat() {
 
     setOnline(online);
     setMessages((old) => [...old, messageModel]);
+
+    scrollMessages();
   });
 
   chatHub.client.on("Disconnect", (text, dateTime, online) => {
@@ -49,6 +60,8 @@ export default function Chat() {
 
     setOnline(online);
     setMessages((old) => [...old, messageModel]);
+
+    scrollMessages();
   });
 
   const handleMessageChange = (event) => {
@@ -72,17 +85,28 @@ export default function Chat() {
     <div className="flex h-screen bg-gray-100">
       <div className="flex flex-col flex-1 border-r border-l border-gray-700">
         <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
-          <span>Chat</span>
+          <span>Chat ({online().length} online)</span>
         </div>
 
         {/* Chat messages */}
-        <div className="flex-1 bg-gray-800 shadow-inner text-white p-4 overflow-y-auto">
-          <ul className="">
+        <div
+          ref={el => (chatContainerRef = el)}
+          className="flex-1 bg-gray-900 text-white p-4 overflow-y-auto shadow-inner space-y-4"
+        >
+          <ul className="space-y-2">
             {messages().map((message, index) => (
-              <li key={index} className="mb-4">
-                <span className={`font-semibold ${message.color}`}>{message.user}:</span>
-                <span className={`break-all mr-3 ${message.color}`}> {message.text}</span>
-                <span className="text-gray-600" >{message.dateTime}</span>
+              <li key={index} className="text-lg break-words">
+                <div className="flex flex-col space-y-0.5 mb-3">
+                  <span className={`font-bold ${message.color}`}>
+                    {message.user}
+                    <span className="text-xs ml-2 text-gray-500">
+                      {message.dateTime}
+                    </span>
+                  </span>
+                  <span className={`font-light ${message.color}`}>
+                    {message.text}
+                  </span>
+                </div>
               </li>
             ))}
           </ul>
