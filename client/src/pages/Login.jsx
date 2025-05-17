@@ -36,7 +36,7 @@ export default function Login(props) {
 
       localStorage.setItem("access_token", token);
 
-      navigate("/chat", { state: { name: username } });
+      navigate("/chat-messages", { state: { name: username } });
     } catch (error) {
       console.error("Login failed:", error);
       alert("Failed to login. Please try again.");

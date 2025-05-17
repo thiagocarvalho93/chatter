@@ -11,7 +11,7 @@ export default function App() {
   return (
     <Router>
       <Route path="/" component={Login} />
-      <Route path="/chat" component={Chat} />
+      <Route path="/chat-messages" component={Chat} />
       <Route path="*paramName" component={NotFound} />
     </Router>
   );
