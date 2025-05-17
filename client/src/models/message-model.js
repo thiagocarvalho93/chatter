@@ -9,6 +9,6 @@ export class MessageModel {
   }
 
   get color() {
-    return this.user == 'Server' ? 'text-blue-500' : ''
+    return this.user == 'Server' ? 'text-blue-500' : 'text-gray-300'
   }
 }

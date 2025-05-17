@@ -3,7 +3,6 @@ import { createSignal, onMount } from "solid-js";
 import chatHub from "../plugins/chatHub";
 import { fetchMessages } from "../api/message-api";
 import { MessageModel } from "../models/message-model";
-import { formatDate } from "../utils/date-util";
 import { useNavigate } from "@solidjs/router";
 
 export default function Chat() {
@@ -12,6 +11,7 @@ export default function Chat() {
   const [messages, setMessages] = createSignal([]);
   const [message, setMessage] = createSignal("");
   const [online, setOnline] = createSignal([]);
+  const [isTyping, setIsTyping] = createSignal(false);
   const navigate = useNavigate();
   let chatContainerRef;
 
@@ -66,6 +66,8 @@ export default function Chat() {
 
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
+
+    setIsTyping(!!message());
   };
 
   const handleSendMessage = () => {
@@ -84,14 +86,14 @@ export default function Chat() {
   return (
     <div className="flex h-screen bg-gray-100">
       <div className="flex flex-col flex-1 border-r border-l border-gray-700">
-        <div className="bg-gray-900 text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
+        <div className="bg-gray-900 text-gray-200 py-4 px-8 text-xl font-bold border-b border-gray-700">
           <span>Chat ({online().length} online)</span>
         </div>
 
         {/* Chat messages */}
         <div
           ref={el => (chatContainerRef = el)}
-          className="flex-1 bg-gray-900 text-white p-4 overflow-y-auto shadow-inner space-y-4"
+          className="flex-1 bg-gray-800 text-gray-200 p-4 overflow-y-auto shadow-inner space-y-4"
         >
           <ul className="space-y-2">
             {messages().map((message, index) => (
@@ -103,7 +105,7 @@ export default function Chat() {
                       {message.dateTime}
                     </span>
                   </span>
-                  <span className={`font-light ${message.color}`}>
+                  <span className={`${message.color}`}>
                     {message.text}
                   </span>
                 </div>
@@ -118,15 +120,17 @@ export default function Chat() {
             id="message-input"
             type="text"
             value={message()}
+            autocomplete="off"
             onInput={handleMessageChange}
             onKeyDown={handleKeyPress}
-            className="flex-1 bg-gray-800 shadow-inner text-white px-4 py-2 rounded-l focus:outline-none"
+            className="flex-1 bg-gray-800 shadow-inner text-gray-200 px-4 py-2 rounded-l focus:outline-none"
             placeholder="Type your message here..."
           />
           <button
             id="send-btn"
             onClick={handleSendMessage}
-            className="bg-blue-500 text-white px-6 py-2 rounded-r hover:bg-blue-600 focus:outline-none"
+            className="bg-blue-500 text-gray-200 px-6 py-2 rounded-r hover:bg-blue-600 focus:outline-none"
+            disabled={!isTyping()}
           >
             Send
           </button>
@@ -134,8 +138,8 @@ export default function Chat() {
       </div>
 
       {/* Right sidebar for "Who is Online?" */}
-      <div className="bg-gray-900 hidden md:block w-0 md:w-64 text-white">
-        <div className="bg-gray-900 hidden md:block text-white py-4 px-8 text-xl font-bold border-b border-gray-700">
+      <div className="bg-gray-900 hidden md:block w-0 md:w-64 text-gray-200">
+        <div className="bg-gray-900 hidden md:block text-gray-200 py-4 px-8 text-xl font-bold border-b border-gray-700">
           Who is online?
         </div>
         <ul>
